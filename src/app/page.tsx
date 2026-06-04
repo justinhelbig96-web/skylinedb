@@ -14,7 +14,6 @@ import type { VehicleData, TabId } from '@/types';
 
 export default function Home() {
   const [vehicle, setVehicle]   = useState<VehicleData | null>(null);
-  const [epcInfo, setEpcInfo]   = useState<Record<string, string> | null>(null);
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>('specs');
@@ -23,35 +22,18 @@ export default function Home() {
     setLoading(true);
     setError(null);
     setVehicle(null);
-    setEpcInfo(null);
     setActiveTab('specs');
 
     try {
-      // Fetch VIN decode + EPC vehicle info in parallel
-      const cleanChassis = chassis.replace(/[-\s]/g, '').toUpperCase();
-      const [vinRes, epcRes] = await Promise.allSettled([
-        fetch(`/api/vin?chassis=${encodeURIComponent(chassis)}`),
-        fetch(`/api/epc-proxy?type=groups&chassis=${encodeURIComponent(cleanChassis)}`),
-      ]);
-
-      if (vinRes.status === 'fulfilled') {
-        const json = await vinRes.value.json();
-        if (!vinRes.value.ok) {
-          setError(json.error ?? 'Kein Fahrzeug gefunden.');
-        } else {
-          setVehicle(json.data);
-        }
+      const res  = await fetch(`/api/vin?chassis=${encodeURIComponent(chassis)}`);
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? 'Kein Fahrzeug gefunden.');
       } else {
-        setError('Verbindungsfehler. Bitte versuche es erneut.');
+        setVehicle(json.data);
       }
-
-      // Set EPC info regardless of VIN result
-      if (epcRes.status === 'fulfilled' && epcRes.value.ok) {
-        const epcJson = await epcRes.value.json();
-        if (epcJson.vehicleInfo && Object.keys(epcJson.vehicleInfo).length > 0) {
-          setEpcInfo(epcJson.vehicleInfo);
-        }
-      }
+    } catch {
+      setError('Verbindungsfehler. Bitte versuche es erneut.');
     } finally {
       setLoading(false);
     }
@@ -83,7 +65,7 @@ export default function Home() {
             <div className="bg-white border border-jdm-border rounded-xl shadow-card overflow-hidden">
               <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
               <div className="p-6">
-                {activeTab === 'specs'     && <SpecsTab     vehicle={vehicle} epcInfo={epcInfo} />}
+                {activeTab === 'specs'     && <SpecsTab     vehicle={vehicle} />}
                 {activeTab === 'equipment' && <EquipmentTab vehicle={vehicle} />}
                 {activeTab === 'epc'       && <EpcTab       vehicle={vehicle} />}
                 {activeTab === 'parts'     && <PartsTab     vehicle={vehicle} />}

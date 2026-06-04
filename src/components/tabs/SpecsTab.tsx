@@ -2,7 +2,6 @@ import type { VehicleData } from '@/types';
 
 interface Props {
   vehicle: VehicleData;
-  epcInfo?: Record<string, string> | null;
 }
 
 // Labels that map EPC field names → German display label
@@ -34,43 +33,11 @@ function epcLabel(key: string): string {
   return key;
 }
 
-export default function SpecsTab({ vehicle, epcInfo }: Props) {
+export default function SpecsTab({ vehicle }: Props) {
   const { engine } = vehicle;
-  const hasEpc = epcInfo && Object.keys(epcInfo).length > 0;
 
   return (
     <div className="space-y-8 animate-fade-in">
-
-      {/* EPC Originaldaten — shown first, acts as primary source */}
-      {hasEpc && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <p className="section-title mb-0">Originaldaten — nissan.epc-data.com</p>
-            <span className="text-[10px] bg-green-100 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">
-              Primärquelle
-            </span>
-          </div>
-          <div className="border border-green-200 rounded-lg divide-y divide-green-100 bg-white overflow-hidden">
-            {Object.entries(epcInfo).map(([k, v]) => (
-              <div key={k} className="data-row px-4 bg-green-50/40">
-                <span className="data-label">{epcLabel(k)} <span className="text-[10px] text-green-500 font-mono">({k})</span></span>
-                <span className="data-value font-medium text-green-800">{v}</span>
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] text-jdm-muted mt-1">
-            Quelle:{' '}
-            <a
-              href={`https://nissan.epc-data.com/skyline/nissan_skyline-${vehicle.chassisNumber.replace(/[-\s].*/i, '').toLowerCase()}/`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-jdm-red"
-            >
-              nissan.epc-data.com ↗
-            </a>
-          </p>
-        </div>
-      )}
 
       {/* Allgemein */}
       <Section title="Allgemein">

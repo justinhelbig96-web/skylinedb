@@ -21,18 +21,20 @@ export default function PartsTab({ vehicle }: Props) {
     setShopProducts([]);
 
     try {
-      // Run both searches in parallel
-      const [mainRes, shopRes] = await Promise.allSettled([
-        fetch(`/api/parts-search?q=${encodeURIComponent(query)}&engine=${encodeURIComponent(vehicle.engine.code)}`),
-        fetch(`/api/shop-search?q=${encodeURIComponent(query)}&shop=jdmheart`),
-      ]);
+      // Step 1: get translations
+      const mainRes = await fetch(
+        `/api/parts-search?q=${encodeURIComponent(query)}&engine=${encodeURIComponent(vehicle.engine.code)}`
+      );
+      if (!mainRes.ok) return;
+      const mainData: PartsSearchResult = await mainRes.json();
+      setResult(mainData);
 
-      if (mainRes.status === 'fulfilled' && mainRes.value.ok) {
-        setResult(await mainRes.value.json());
-      }
-      if (shopRes.status === 'fulfilled' && shopRes.value.ok) {
-        const data = await shopRes.value.json();
-        setShopProducts(data.products ?? []);
+      // Step 2: search shops with English term for better matches
+      const searchTerm = mainData.translations[0] ?? query;
+      const shopRes = await fetch(`/api/shop-search?q=${encodeURIComponent(searchTerm)}`);
+      if (shopRes.ok) {
+        const shopData = await shopRes.json();
+        setShopProducts(shopData.products ?? []);
       }
     } catch {
       // silently ignore — show empty state
@@ -110,43 +112,11 @@ export default function PartsTab({ vehicle }: Props) {
             </div>
           </div>
 
-          {/* JDM Heart — iframe fallback when scraping returns nothing */}
-          {shopProducts.length === 0 && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="section-title">JDM Heart — Suche</p>
-                <a
-                  href={`https://www.jdmheart.com/de/catalogsearch/result/?q=${encodeURIComponent(result.translations[0] ?? query)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-jdm-muted hover:text-jdm-red transition-colors"
-                >
-                  Im Browser öffnen ↗
-                </a>
-              </div>
-              <div className="relative rounded-xl border border-jdm-border overflow-hidden bg-white" style={{ height: '520px' }}>
-                <iframe
-                  src={`https://www.jdmheart.com/de/catalogsearch/result/?q=${encodeURIComponent(result.translations[0] ?? query)}`}
-                  className="w-full h-full border-0"
-                  title="JDM Heart Produktsuche"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* JDM Heart product cards with images */}
+          {/* Product cards from multiple shops */}
           {shopProducts.length > 0 && (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <p className="section-title">JDM Heart — Produkte ({shopProducts.length})</p>
-                <a
-                  href={`https://www.jdmheart.com/de/catalogsearch/result/?q=${encodeURIComponent(query)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-jdm-muted hover:text-jdm-red transition-colors"
-                >
-                  Alle auf jdmheart.com ↗
-                </a>
+                <p className="section-title">Produkte ({shopProducts.length})</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {shopProducts.map((p, i) => (
@@ -159,7 +129,7 @@ export default function PartsTab({ vehicle }: Props) {
                                overflow-hidden hover:border-jdm-red/50 hover:shadow-card-hover
                                transition-all duration-150"
                   >
-                    {/* Product image with price badge */}
+                    {/* Product image with price + shop badge */}
                     <div className="aspect-square bg-jdm-bg overflow-hidden flex items-center justify-center relative">
                       {p.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -185,6 +155,11 @@ export default function PartsTab({ vehicle }: Props) {
                           {p.price}
                         </span>
                       )}
+                      {/* Shop badge */}
+                      <span className="absolute top-1 left-1 bg-black/60 text-white text-[9px] font-medium
+                                       px-1.5 py-0.5 rounded leading-tight">
+                        {p.shopName}
+                      </span>
                     </div>
                     {/* Product name */}
                     <div className="p-2 flex-1">
