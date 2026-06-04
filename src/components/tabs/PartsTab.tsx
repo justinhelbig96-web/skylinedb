@@ -173,9 +173,16 @@ export default function PartsTab({ vehicle }: Props) {
             </div>
           )}
 
-          {/* Shop links */}
+          {/* Shop links — always shown; highlight when no product cards */}
           <div>
-            <p className="section-title">Alle Shops ({result.shopLinks.length})</p>
+            <div className="flex items-center gap-2 mb-2">
+              <p className="section-title">Alle Shops ({result.shopLinks.length})</p>
+              {shopProducts.length === 0 && (
+                <span className="text-[10px] bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium">
+                  Preise direkt auf den Shops
+                </span>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {result.shopLinks.map(({ shop, searchUrl, query: q }) => (
                 <a

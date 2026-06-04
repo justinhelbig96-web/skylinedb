@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { VehicleData } from '@/types';
 
 interface Props { vehicle: VehicleData }
@@ -30,11 +30,26 @@ function getEpcUrl(chassisNumber: string): string | null {
 
 export default function EpcTab({ vehicle }: Props) {
   const url = getEpcUrl(vehicle.chassisNumber);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded]   = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
+  const loadedRef = useRef(false);
 
   useEffect(() => {
+    loadedRef.current = false;
     setLoaded(false);
-  }, [vehicle.chassisNumber]);
+    setTimedOut(false);
+
+    const t = setTimeout(() => {
+      if (!loadedRef.current) setTimedOut(true);
+    }, 10_000);
+
+    return () => clearTimeout(t);
+  }, [url]);
+
+  function handleLoad() {
+    loadedRef.current = true;
+    setLoaded(true);
+  }
 
   if (!url) {
     return (
@@ -67,7 +82,26 @@ export default function EpcTab({ vehicle }: Props) {
 
       {/* Iframe container */}
       <div className="relative rounded-xl border border-jdm-border overflow-hidden bg-white" style={{ height: '640px' }}>
-        {!loaded && (
+        {/* Timeout fallback — shown when iframe never fired onLoad (rate-limited / blocked) */}
+        {timedOut && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-jdm-bg gap-4 z-20 p-6 text-center">
+            <span className="text-4xl">📋</span>
+            <p className="font-semibold text-jdm-text">EPC-Katalog nicht verfügbar</p>
+            <p className="text-sm text-jdm-muted max-w-xs">
+              nissan.epc-data.com ist momentan nicht erreichbar (Rate Limit / Netzwerkfehler).
+            </p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary px-5 py-2.5"
+            >
+              Im Browser öffnen ↗
+            </a>
+          </div>
+        )}
+        {/* Spinner while loading */}
+        {!loaded && !timedOut && (
           <div className="absolute inset-0 flex items-center justify-center bg-jdm-bg gap-3 text-jdm-muted z-10">
             <span className="w-5 h-5 border-2 border-jdm-border border-t-jdm-red rounded-full animate-spin" />
             <span className="text-sm">Lade EPC-Katalog…</span>
@@ -78,7 +112,7 @@ export default function EpcTab({ vehicle }: Props) {
           src={url}
           className="w-full h-full border-0"
           title={`Nissan EPC — ${vehicle.chassisNumber}`}
-          onLoad={() => setLoaded(true)}
+          onLoad={handleLoad}
           referrerPolicy="no-referrer"
         />
       </div>
