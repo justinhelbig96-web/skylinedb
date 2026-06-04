@@ -2,28 +2,38 @@
 
 import { useState, FormEvent } from 'react';
 import { PARTS_SYNONYMS } from '@/data/partsSynonyms';
-import { SHOPS } from '@/data/shops';
 import type { VehicleData, PartsSearchResult } from '@/types';
+import type { ShopProduct } from '@/app/api/shop-search/route';
 
 interface Props { vehicle: VehicleData }
 
 export default function PartsTab({ vehicle }: Props) {
-  const [query,   setQuery]   = useState('');
-  const [result,  setResult]  = useState<PartsSearchResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [query,        setQuery]        = useState('');
+  const [result,       setResult]       = useState<PartsSearchResult | null>(null);
+  const [shopProducts, setShopProducts] = useState<ShopProduct[]>([]);
+  const [loading,      setLoading]      = useState(false);
 
   async function handleSearch(e: FormEvent) {
     e.preventDefault();
     if (!query.trim()) return;
     setLoading(true);
     setResult(null);
+    setShopProducts([]);
 
     try {
-      const res  = await fetch(
-        `/api/parts-search?q=${encodeURIComponent(query)}&engine=${encodeURIComponent(vehicle.engine.code)}`,
-      );
-      const json = await res.json();
-      setResult(json);
+      // Run both searches in parallel
+      const [mainRes, shopRes] = await Promise.allSettled([
+        fetch(`/api/parts-search?q=${encodeURIComponent(query)}&engine=${encodeURIComponent(vehicle.engine.code)}`),
+        fetch(`/api/shop-search?q=${encodeURIComponent(query)}&shop=jdmheart`),
+      ]);
+
+      if (mainRes.status === 'fulfilled' && mainRes.value.ok) {
+        setResult(await mainRes.value.json());
+      }
+      if (shopRes.status === 'fulfilled' && shopRes.value.ok) {
+        const data = await shopRes.value.json();
+        setShopProducts(data.products ?? []);
+      }
     } catch {
       // silently ignore — show empty state
     } finally {
@@ -48,7 +58,7 @@ export default function PartsTab({ vehicle }: Props) {
           className="flex-1 bg-white border border-jdm-border rounded-lg px-4 py-2.5
                      text-jdm-text placeholder:text-jdm-muted/60 text-sm
                      focus:border-jdm-red focus:outline-none transition-colors"
-          placeholder='z.B. "Zahnriemen" oder "Timing Belt"'
+          placeholder='z.B. "Zahnriemen" oder "Nockenwellenrad"'
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           disabled={loading}
@@ -83,7 +93,7 @@ export default function PartsTab({ vehicle }: Props) {
 
       {/* Results */}
       {result && (
-        <div className="space-y-4 animate-slide-up">
+        <div className="space-y-5 animate-slide-up">
           {/* Translations */}
           <div className="border border-jdm-border rounded-lg p-4 space-y-3 bg-white">
             <p className="section-title">Suchbegriffe</p>
@@ -100,9 +110,69 @@ export default function PartsTab({ vehicle }: Props) {
             </div>
           </div>
 
+          {/* JDM Heart product cards with images */}
+          {shopProducts.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="section-title">JDM Heart — Produkte ({shopProducts.length})</p>
+                <a
+                  href={`https://www.jdmheart.com/de/catalogsearch/result/?q=${encodeURIComponent(query)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-jdm-muted hover:text-jdm-red transition-colors"
+                >
+                  Alle auf jdmheart.com ↗
+                </a>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {shopProducts.map((p, i) => (
+                  <a
+                    key={i}
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col bg-white border border-jdm-border rounded-xl
+                               overflow-hidden hover:border-jdm-red/50 hover:shadow-card-hover
+                               transition-all duration-150"
+                  >
+                    {/* Product image */}
+                    <div className="aspect-square bg-jdm-bg overflow-hidden flex items-center justify-center">
+                      {p.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.imageUrl}
+                          alt={p.name}
+                          className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-200"
+                          onError={(e) => {
+                            const el = e.currentTarget as HTMLImageElement;
+                            el.style.display = 'none';
+                            if (el.parentElement) {
+                              el.parentElement.innerHTML = '<span class="text-3xl opacity-30">📦</span>';
+                            }
+                          }}
+                        />
+                      ) : (
+                        <span className="text-3xl opacity-30">📦</span>
+                      )}
+                    </div>
+                    {/* Product info */}
+                    <div className="p-2 flex flex-col gap-1 flex-1">
+                      <p className="text-xs text-jdm-text font-medium leading-snug line-clamp-2 group-hover:text-jdm-red transition-colors">
+                        {p.name}
+                      </p>
+                      {p.price && (
+                        <p className="text-xs font-bold text-jdm-red mt-auto">{p.price}</p>
+                      )}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Shop links */}
           <div>
-            <p className="section-title">Shops ({result.shopLinks.length})</p>
+            <p className="section-title">Alle Shops ({result.shopLinks.length})</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {result.shopLinks.map(({ shop, searchUrl, query: q }) => (
                 <a
@@ -149,3 +219,4 @@ function TermRow({ label, terms, color }: { label: string; terms: string[]; colo
     </div>
   );
 }
+
