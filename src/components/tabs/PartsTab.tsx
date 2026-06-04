@@ -135,8 +135,8 @@ export default function PartsTab({ vehicle }: Props) {
                                overflow-hidden hover:border-jdm-red/50 hover:shadow-card-hover
                                transition-all duration-150"
                   >
-                    {/* Product image */}
-                    <div className="aspect-square bg-jdm-bg overflow-hidden flex items-center justify-center">
+                    {/* Product image with price badge */}
+                    <div className="aspect-square bg-jdm-bg overflow-hidden flex items-center justify-center relative">
                       {p.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -154,15 +154,19 @@ export default function PartsTab({ vehicle }: Props) {
                       ) : (
                         <span className="text-3xl opacity-30">📦</span>
                       )}
+                      {/* Price badge */}
+                      {p.price && (
+                        <span className="absolute bottom-1 right-1 bg-jdm-red text-white text-[11px] font-bold
+                                         px-1.5 py-0.5 rounded shadow-sm leading-tight">
+                          {p.price}
+                        </span>
+                      )}
                     </div>
-                    {/* Product info */}
-                    <div className="p-2 flex flex-col gap-1 flex-1">
+                    {/* Product name */}
+                    <div className="p-2 flex-1">
                       <p className="text-xs text-jdm-text font-medium leading-snug line-clamp-2 group-hover:text-jdm-red transition-colors">
                         {p.name}
                       </p>
-                      {p.price && (
-                        <p className="text-xs font-bold text-jdm-red mt-auto">{p.price}</p>
-                      )}
                     </div>
                   </a>
                 ))}

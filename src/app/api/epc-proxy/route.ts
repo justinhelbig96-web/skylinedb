@@ -59,13 +59,27 @@ function extractLinks(html: string, hrefPrefix: string) {
   let m: RegExpExecArray | null;
   while ((m = re.exec(html)) !== null) {
     const href = m[1].trim();
-    const text = m[2].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    const text = decodeEntities(m[2].replace(/<[^>]+>/g, ''));
     if (!text || href === hrefPrefix) continue;
     if (href.startsWith(hrefPrefix) && !results.find((r) => r.href === href)) {
       results.push({ href, text });
     }
   }
   return results;
+}
+
+/** Decode common HTML entities to plain text. */
+function decodeEntities(str: string): string {
+  return str
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&#160;/g, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Parse the vehicle info table (key-value pairs in <td> cells). */
@@ -79,13 +93,15 @@ function parseInfoTable(html: string): Record<string, string> {
     const cells: string[] = [];
     let cellM: RegExpExecArray | null;
     while ((cellM = cellRe.exec(rowM[1])) !== null) {
-      cells.push(cellM[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
+      const text = decodeEntities(cellM[1].replace(/<[^>]+>/g, ''));
+      cells.push(text);
     }
     // Rows with 2+ cells: odd = label, even = value
     for (let i = 0; i + 1 < cells.length; i += 2) {
       const k = cells[i];
       const v = cells[i + 1];
-      if (k && v && k.length < 40) info[k] = v;
+      // Skip rows that are empty after decoding
+      if (k && v && k.length < 60 && k !== v) info[k] = v;
     }
   }
   return info;
