@@ -5,6 +5,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'amayama.com' },
       { protocol: 'https', hostname: 'nengun.com' },
       { protocol: 'https', hostname: 'www.nengun.com' },
+      { protocol: 'https', hostname: 'nissan.epc-data.com' },
     ],
   },
 }

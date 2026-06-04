@@ -2,7 +2,9 @@ import type { VehicleData } from '@/types';
 
 /**
  * Mock data for chassis number ER34-030828.
- * Replace or extend with real API data when a backend decoder is connected.
+ * NOTE: ER34 covers both 25GT (RB25DE, naturally aspirated) and 25GT-T (RB25DET, turbocharged).
+ * This specific example is configured as a 25GT-T (RB25DET).
+ * The engine can only be determined via full factory VIN sheet or vehicle documents.
  */
 export const ER34_030828: VehicleData = {
   chassisNumber:   'ER34-030828',

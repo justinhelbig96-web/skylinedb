@@ -236,24 +236,26 @@ const CHASSIS_TABLE: ChassisPrefix[] = [
     grade:             '20GT',
   },
   {
+    // ER34 covers BOTH 25GT (RB25DE, NA) and 25GT-T (RB25DET, Turbo).
+    // Engine cannot be determined from chassis prefix alone — Grade/option code needed.
     pattern:           /^ER34/,
-    model:             'Skyline 25GT-T',
-    fullName:          'Nissan Skyline 25GT-T (ER34)',
+    model:             'Skyline 25GT / 25GT-T',
+    fullName:          'Nissan Skyline 25GT / 25GT-T (ER34)',
     generation:        'R34',
     yearRange:         '1998–2001',
     productionPeriod:  'May 1998 – June 2001',
-    engineCode:        'RB25DET',
-    engineName:        'Inline-6 Turbo (Neo VVL)',
+    engineCode:        'RB25DE / RB25DET',
+    engineName:        'Inline-6 NA oder Turbo (Neo VVL) – abhängig vom Grade',
     displacement:      '2498 cc',
-    powerHP:           206,
-    powerKW:           151,
-    torqueNm:          275,
-    aspiration:        'turbocharged',
-    transmission:      '5-speed manual (FS5W71C)',
+    powerHP:           180,   // NA: 180 PS | Turbo: 206 PS
+    powerKW:           132,
+    torqueNm:          225,   // NA: 225 Nm | Turbo: 275 Nm
+    aspiration:        'naturally-aspirated', // placeholder – see note above
+    transmission:      '5-speed manual (FS5W71C) / 4AT',
     drivetrain:        'FR (Front Engine / Rear Wheel Drive)',
     bodyStyle:         'Sedan (4-door)',
     doors:             4,
-    grade:             '25GT-T',
+    grade:             '25GT (RB25DE) oder 25GT-T (RB25DET)',
   },
   {
     pattern:           /^BNR34/,
@@ -305,6 +307,10 @@ function decodeSkylineChassis(chassis: string): VehicleData | null {
   const seqMatch = normalized.match(/\d+$/);
   const sequence = seqMatch ? seqMatch[0] : '000000';
 
+  // ER34 is ambiguous: both RB25DE (25GT) and RB25DET (25GT-T) use the same chassis prefix.
+  // The grade/trim code within the full VIN determines the actual engine.
+  const isAmbiguous = /^ER34/i.test(normalized);
+
   return {
     chassisNumber:   chassis,
     model:           entry.model,
@@ -337,7 +343,9 @@ function decodeSkylineChassis(chassis: string): VehicleData | null {
     interiorName:    'Unknown',
     equipmentCodes:  [],
     optionCodes:     [],
-    features:        [],
+    features:        isAmbiguous
+      ? ['⚠ ER34 Hinweis: Chassis-Präfix allein reicht nicht aus. ER34 existiert mit RB25DE (25GT, Sauger) UND RB25DET (25GT-T, Turbo). Vollständige VIN oder Fahrzeugpapiere für genaue Motorbestimmung notwendig.']
+      : [],
     sequenceNumber:  sequence,
     marketCode:      'JDM',
     source:          'decoded',
