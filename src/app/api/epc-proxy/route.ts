@@ -101,7 +101,8 @@ function parseInfoTable(html: string): Record<string, string> {
       const k = cells[i];
       const v = cells[i + 1];
       // Skip rows that are empty after decoding
-      if (k && v && k.length < 60 && k !== v) info[k] = v;
+      // Skip nav-list entries: sidebar menus have many space-separated tokens
+      if (k && v && k.length < 60 && k !== v && v.trim().split(/\s+/).length <= 6) info[k] = v;
     }
   }
   return info;

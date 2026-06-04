@@ -110,6 +110,30 @@ export default function PartsTab({ vehicle }: Props) {
             </div>
           </div>
 
+          {/* JDM Heart — iframe fallback when scraping returns nothing */}
+          {shopProducts.length === 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="section-title">JDM Heart — Suche</p>
+                <a
+                  href={`https://www.jdmheart.com/de/catalogsearch/result/?q=${encodeURIComponent(result.translations[0] ?? query)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-jdm-muted hover:text-jdm-red transition-colors"
+                >
+                  Im Browser öffnen ↗
+                </a>
+              </div>
+              <div className="relative rounded-xl border border-jdm-border overflow-hidden bg-white" style={{ height: '520px' }}>
+                <iframe
+                  src={`https://www.jdmheart.com/de/catalogsearch/result/?q=${encodeURIComponent(result.translations[0] ?? query)}`}
+                  className="w-full h-full border-0"
+                  title="JDM Heart Produktsuche"
+                />
+              </div>
+            </div>
+          )}
+
           {/* JDM Heart product cards with images */}
           {shopProducts.length > 0 && (
             <div>
