@@ -15,17 +15,19 @@ interface Props {
 
 export default function TabBar({ activeTab, onTabChange }: Props) {
   return (
-    <div className="flex gap-1 overflow-x-auto p-3 border-b border-jdm-border scrollbar-none">
+    <div className="flex gap-1 overflow-x-auto px-4 pt-4 pb-0 border-b border-jdm-border scrollbar-none">
       {TABS.map((tab) => (
         <button
           key={tab.id}
           type="button"
           onClick={() => onTabChange(tab.id)}
-          className={`tab-btn ${
-            activeTab === tab.id ? 'tab-btn-active' : 'tab-btn-inactive'
+          className={`tab-btn border-b-2 rounded-none pb-3 transition-colors ${
+            activeTab === tab.id
+              ? 'border-jdm-red text-jdm-red font-semibold'
+              : 'border-transparent text-jdm-muted hover:text-jdm-text'
           }`}
         >
-          <span>{tab.icon}</span>
+          <span className="text-sm">{tab.icon}</span>
           <span>{tab.labelDE}</span>
         </button>
       ))}

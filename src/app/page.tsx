@@ -41,31 +41,30 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-jdm-bg">
       <Header />
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-10 space-y-8">
+      <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 space-y-6">
         {/* VIN Input */}
         <VinInput onSearch={handleSearch} loading={loading} />
 
         {/* Error */}
         {error && (
-          <div className="card p-5 border-jdm-red/60 bg-jdm-red/10 animate-fade-in">
-            <p className="text-jdm-red-bright font-medium">⚠ {error}</p>
-            <p className="text-jdm-muted text-sm mt-1">
-              Bekannte Chassis-Präfixe: BNR32, ECR33, BCNR33, HR32, ER34, ENR34, BNR34
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-fade-in">
+            <p className="text-red-600 font-medium text-sm">⚠ {error}</p>
+            <p className="text-red-400 text-xs mt-1">
+              Bekannte Präfixe: BNR32, HCR32, HNR32, ECR33, HCR33, BCNR33, HR34, ER34, ENR34, BNR34
             </p>
           </div>
         )}
 
         {/* Results */}
         {vehicle && (
-          <div className="animate-slide-up space-y-6">
+          <div className="animate-slide-up space-y-5">
             <VehicleCard vehicle={vehicle} />
 
-            <div className="card overflow-hidden">
+            <div className="bg-white border border-jdm-border rounded-xl shadow-card overflow-hidden">
               <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
-
               <div className="p-6">
                 {activeTab === 'specs'     && <SpecsTab     vehicle={vehicle} />}
                 {activeTab === 'equipment' && <EquipmentTab vehicle={vehicle} />}
@@ -80,22 +79,21 @@ export default function Home() {
         {/* Empty state */}
         {!vehicle && !loading && !error && (
           <div className="text-center py-20 space-y-3 animate-fade-in">
-            <p className="text-6xl">🏎</p>
-            <p className="text-jdm-muted text-lg">
-              Gib deine Fahrgestellnummer ein, um zu starten.
-            </p>
+            <p className="text-5xl">🏎</p>
+            <p className="text-jdm-muted">Gib deine Fahrgestellnummer ein, um zu starten.</p>
             <p className="text-jdm-muted/60 text-sm">
-              Beispiel: <span className="font-mono text-jdm-red">ER34-030828</span>
+              Beispiel:{' '}
+              <code className="font-mono text-jdm-red bg-red-50 px-1.5 py-0.5 rounded">
+                ER34-030828
+              </code>
             </p>
           </div>
         )}
       </main>
 
-      <footer className="border-t border-jdm-border py-6 text-center text-jdm-muted text-sm">
+      <footer className="border-t border-jdm-border bg-white py-5 text-center text-jdm-muted text-xs">
         <p>SkylineDB — Inoffizieller Nissan Skyline VIN-Decoder &amp; Teile-Finder</p>
-        <p className="text-xs mt-1 text-jdm-muted/50">
-          Keine Gewähr für Datenkorrektheit. Alle Daten zu Informationszwecken.
-        </p>
+        <p className="mt-1 text-jdm-muted/50">Alle Daten zu Informationszwecken. Keine Gewähr für Datenkorrektheit.</p>
       </footer>
     </div>
   );

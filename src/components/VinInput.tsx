@@ -19,18 +19,16 @@ export default function VinInput({ onSearch, loading }: Props) {
   }
 
   return (
-    <section className="card p-6 md:p-8 space-y-5">
-      <div>
-        <h2 className="text-2xl font-display font-bold text-jdm-text">
-          Fahrgestellnummer / Chassis Number
-        </h2>
-        <p className="text-jdm-muted text-sm mt-1">
-          Gib deine Nissan Skyline Chassis-Nummer ein (z.B.{' '}
-          <code className="text-jdm-red font-mono">ER34-030828</code>)
+    <section className="bg-white border border-jdm-border rounded-xl shadow-card p-6">
+      <div className="mb-5">
+        <h2 className="text-lg font-semibold text-jdm-text">Fahrgestellnummer eingeben</h2>
+        <p className="text-jdm-muted text-sm mt-0.5">
+          Nissan Skyline Chassis-Nummer — z.B.{' '}
+          <code className="font-mono text-jdm-red bg-red-50 px-1 py-0.5 rounded text-xs">ER34-030828</code>
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-3 flex-col sm:flex-row">
+      <form onSubmit={handleSubmit} className="flex gap-2 flex-col sm:flex-row">
         <input
           type="text"
           className="input-vin flex-1"
@@ -45,11 +43,11 @@ export default function VinInput({ onSearch, loading }: Props) {
         />
         <button
           type="submit"
-          className="btn-primary sm:w-auto w-full"
+          className="btn-primary sm:w-auto w-full text-sm"
           disabled={loading || value.trim().length < 5}
         >
           {loading ? (
-            <span className="flex items-center gap-2">
+            <span className="flex items-center justify-center gap-2">
               <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               Suche…
             </span>
@@ -60,7 +58,7 @@ export default function VinInput({ onSearch, loading }: Props) {
       </form>
 
       {/* Quick examples */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mt-4">
         <span className="text-xs text-jdm-muted self-center">Beispiele:</span>
         {EXAMPLES.map((ex) => (
           <button
@@ -68,9 +66,9 @@ export default function VinInput({ onSearch, loading }: Props) {
             type="button"
             onClick={() => { setValue(ex); onSearch(ex); }}
             disabled={loading}
-            className="text-xs font-mono px-3 py-1.5 rounded-lg border border-jdm-border
-                       text-jdm-muted hover:text-jdm-red hover:border-jdm-red/60
-                       transition-all duration-150 disabled:opacity-40"
+            className="text-xs font-mono px-2.5 py-1 rounded border border-jdm-border
+                       text-jdm-muted hover:text-jdm-red hover:border-jdm-red/50
+                       bg-jdm-bg transition-all duration-150 disabled:opacity-40"
           >
             {ex}
           </button>

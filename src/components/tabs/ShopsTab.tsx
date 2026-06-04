@@ -20,14 +20,12 @@ export default function ShopsTab() {
   );
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Notice */}
-      <div className="card p-4 border-jdm-blue/40 bg-jdm-blue/5">
-        <p className="text-jdm-blue text-sm font-medium">🛒 Shop-Verzeichnis</p>
-        <p className="text-jdm-muted text-xs mt-1">
-          Logos werden angezeigt sobald Bilddateien unter{' '}
-          <code className="text-jdm-text">/public/logos/</code> hinterlegt sind.
-          {/* TODO: add shop logos and direct API integrations when available */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+        <p className="text-blue-700 font-medium">🛒 Shop-Verzeichnis</p>
+        <p className="text-blue-600/80 text-xs mt-1">
+          Shop-Logos unter <code className="bg-blue-100 px-1 rounded">/public/logos/</code> hinterlegen.
         </p>
       </div>
 
@@ -38,44 +36,36 @@ export default function ShopsTab() {
             <p className="section-title">
               {FLAG[shops[0].countryCode] ?? '🌍'} {country}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {shops.map((shop) => (
                 <a
                   key={shop.id}
                   href={shop.website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="card p-5 flex flex-col gap-3 hover:border-jdm-red/60
+                  className="flex flex-col gap-3 p-4 bg-white border border-jdm-border
+                             rounded-xl hover:border-jdm-red/50 hover:shadow-card-hover
                              transition-all duration-150 group"
                 >
                   {/* Logo area */}
-                  <div className="w-full h-12 bg-jdm-surface rounded-lg border border-jdm-border
-                                  flex items-center justify-center text-2xl">
+                  <div className="w-full h-10 bg-jdm-bg rounded border border-jdm-border
+                                  flex items-center justify-center text-xl">
                     🛒
-                    {/* TODO: <Image src={shop.logoPath} alt={shop.name} fill /> */}
                   </div>
 
                   <div>
-                    <p className="font-semibold text-jdm-text group-hover:text-jdm-red-bright transition-colors">
+                    <p className="font-semibold text-sm text-jdm-text group-hover:text-jdm-red transition-colors">
                       {shop.name}
                     </p>
-                    <p className="text-xs text-jdm-muted/70 mt-0.5">{shop.website}</p>
+                    <p className="text-xs text-jdm-muted/70 mt-0.5 truncate">{shop.website}</p>
                   </div>
 
-                  {/* Specialties */}
                   <div className="flex flex-wrap gap-1">
                     {shop.specialties.slice(0, 3).map((spec) => (
-                      <span
-                        key={spec}
-                        className="badge border border-jdm-border text-jdm-muted text-[10px]"
-                      >
+                      <span key={spec} className="text-[10px] px-1.5 py-0.5 rounded bg-jdm-bg border border-jdm-border text-jdm-muted">
                         {spec}
                       </span>
                     ))}
-                  </div>
-
-                  <div className="mt-auto pt-2 border-t border-jdm-border/50 text-xs text-jdm-muted">
-                    Priorität #{shop.priority}
                   </div>
                 </a>
               ))}

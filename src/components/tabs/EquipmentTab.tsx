@@ -3,10 +3,10 @@ import type { VehicleData } from '@/types';
 interface Props { vehicle: VehicleData }
 
 const CATEGORY_COLOR: Record<string, string> = {
-  Safety:  'text-jdm-green  border-jdm-green/30  bg-jdm-green/5',
-  Comfort: 'text-jdm-blue   border-jdm-blue/30   bg-jdm-blue/5',
-  Chassis: 'text-jdm-gold   border-jdm-gold/30   bg-jdm-gold/5',
-  Engine:  'text-jdm-red-bright border-jdm-red/30 bg-jdm-red/5',
+  Safety:  'text-green-700  border-green-200  bg-green-50',
+  Comfort: 'text-blue-700   border-blue-200   bg-blue-50',
+  Chassis: 'text-amber-700  border-amber-200  bg-amber-50',
+  Engine:  'text-red-700    border-red-200    bg-red-50',
 };
 
 export default function EquipmentTab({ vehicle }: Props) {
@@ -18,8 +18,8 @@ export default function EquipmentTab({ vehicle }: Props) {
     return (
       <div className="animate-fade-in text-center py-12 text-jdm-muted">
         <p className="text-4xl mb-3">📋</p>
-        <p>Keine Ausstattungscodes verfügbar für dieses Chassis.</p>
-        <p className="text-sm mt-2 text-jdm-muted/60">
+        <p className="text-sm">Keine Ausstattungscodes verfügbar für dieses Chassis.</p>
+        <p className="text-xs mt-2 text-jdm-muted/60">
           Ausstattungsdaten sind nur für Mock-Einträge vollständig hinterlegt.
         </p>
       </div>
@@ -34,16 +34,16 @@ export default function EquipmentTab({ vehicle }: Props) {
         return (
           <div key={cat}>
             <p className="section-title">{cat}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {items.map((item) => (
                 <div
                   key={item.code}
-                  className={`card flex items-start gap-3 px-4 py-3 border ${colors}`}
+                  className={`flex items-start gap-3 px-4 py-3 rounded-lg border text-sm ${colors}`}
                 >
-                  <span className="font-mono font-bold text-sm shrink-0 w-14">
+                  <span className="font-mono font-bold text-xs shrink-0 w-12 mt-0.5">
                     {item.code}
                   </span>
-                  <span className="text-jdm-text text-sm">{item.description}</span>
+                  <span className="text-jdm-text">{item.description}</span>
                 </div>
               ))}
             </div>

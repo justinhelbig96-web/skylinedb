@@ -68,7 +68,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <div>
       <p className="section-title">{title}</p>
-      <div className="card divide-y divide-jdm-border/50">{children}</div>
+      <div className="border border-jdm-border rounded-lg divide-y divide-jdm-border bg-white">
+        {children}
+      </div>
     </div>
   );
 }
@@ -77,7 +79,7 @@ function Row({ label, value, highlight = false }: { label: string; value: string
   return (
     <div className="data-row px-4">
       <span className="data-label">{label}</span>
-      <span className={`data-value ${highlight ? 'text-jdm-red-bright font-bold font-mono' : ''}`}>
+      <span className={`data-value ${highlight ? 'text-jdm-red font-bold font-mono' : ''}`}>
         {value || '—'}
       </span>
     </div>

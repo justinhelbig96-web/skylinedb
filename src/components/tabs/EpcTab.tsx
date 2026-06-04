@@ -16,31 +16,26 @@ export default function EpcTab({ vehicle: _vehicle }: Props) {
   return (
     <div className="animate-fade-in space-y-5">
       {/* Notice */}
-      <div className="card p-4 border-jdm-gold/40 bg-jdm-gold/5">
-        <p className="text-jdm-gold text-sm font-medium">
-          📐 OEM Parts Diagrams
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p className="text-amber-700 text-sm font-medium">📐 OEM Parts Diagrams</p>
+        <p className="text-amber-600/80 text-xs mt-1">
+          Explosionszeichnungen werden von Nissan FAST/EPC bereitgestellt.
+          Echtzeit-Diagramme werden freigeschaltet, sobald ein EPC-Datenfeed angebunden ist.
         </p>
-        <p className="text-jdm-muted text-xs mt-1">
-          Explosionszeichnungen werden von Nissan FAST/EPC bereitgestellt.{' '}
-          <span className="text-jdm-text">
-            Echtzeit-Diagramme werden freigeschaltet, sobald ein EPC-Datenfeed angebunden ist.
-          </span>
-        </p>
-        {/* TODO: connect Nissan FAST EPC API or JPNPARTS / Amayama EPC */}
       </div>
 
       <div className="flex gap-4 flex-col md:flex-row">
         {/* Category sidebar */}
-        <div className="md:w-48 shrink-0 space-y-1">
+        <div className="md:w-44 shrink-0 space-y-0.5">
           {EPC_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               type="button"
               onClick={() => selectCat(cat)}
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all ${
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all ${
                 activeCat.id === cat.id
-                  ? 'bg-jdm-red text-white'
-                  : 'text-jdm-muted hover:text-jdm-text hover:bg-jdm-border/50'
+                  ? 'bg-jdm-red text-white font-medium'
+                  : 'text-jdm-muted hover:text-jdm-text hover:bg-jdm-bg'
               }`}
             >
               <span className="mr-2">{cat.icon}</span>
@@ -70,21 +65,20 @@ export default function EpcTab({ vehicle: _vehicle }: Props) {
           </div>
 
           {/* Diagram placeholder */}
-          <div className="card aspect-video flex items-center justify-center bg-jdm-surface border-2 border-dashed border-jdm-border/50 rounded-xl">
+          <div className="aspect-video flex items-center justify-center bg-jdm-bg border-2 border-dashed border-jdm-border rounded-xl">
             <div className="text-center space-y-2">
-              <p className="text-5xl opacity-30">📐</p>
+              <p className="text-4xl opacity-30">📐</p>
               <p className="text-jdm-muted text-sm">Explosionszeichnung</p>
               <p className="text-jdm-muted/50 text-xs">{activeSub.nameDE}</p>
-              {/* TODO: load <Image src={activeSub.diagramUrl} /> when EPC connected */}
             </div>
           </div>
 
           {/* Parts table */}
           <div>
             <p className="section-title">Teileliste — {activeSub.nameDE}</p>
-            <div className="card overflow-x-auto">
+            <div className="border border-jdm-border rounded-lg overflow-x-auto">
               <table className="w-full text-sm">
-                <thead>
+                <thead className="bg-jdm-bg">
                   <tr className="border-b border-jdm-border text-left">
                     <th className="px-4 py-2.5 text-jdm-muted font-medium w-10">#</th>
                     <th className="px-4 py-2.5 text-jdm-muted font-medium">OEM Teilenummer</th>
@@ -92,11 +86,11 @@ export default function EpcTab({ vehicle: _vehicle }: Props) {
                     <th className="px-4 py-2.5 text-jdm-muted font-medium text-right">Menge</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-jdm-border/50">
+                <tbody className="divide-y divide-jdm-border bg-white">
                   {activeSub.parts.map((part) => (
-                    <tr key={part.partNumber} className="hover:bg-jdm-surface/50 transition-colors">
-                      <td className="px-4 py-2.5 text-jdm-muted">{part.itemNumber}</td>
-                      <td className="px-4 py-2.5 font-mono text-jdm-red-bright text-xs tracking-wide">
+                    <tr key={part.partNumber} className="hover:bg-jdm-bg transition-colors">
+                      <td className="px-4 py-2.5 text-jdm-muted text-xs">{part.itemNumber}</td>
+                      <td className="px-4 py-2.5 font-mono text-jdm-red text-xs tracking-wide">
                         {part.partNumber}
                       </td>
                       <td className="px-4 py-2.5 text-jdm-text">
@@ -105,9 +99,7 @@ export default function EpcTab({ vehicle: _vehicle }: Props) {
                           <span className="ml-2 text-jdm-muted text-xs">({part.notes})</span>
                         )}
                         {part.supersededBy && (
-                          <span className="ml-2 text-jdm-gold text-xs">
-                            → {part.supersededBy}
-                          </span>
+                          <span className="ml-2 text-amber-600 text-xs">→ {part.supersededBy}</span>
                         )}
                       </td>
                       <td className="px-4 py-2.5 text-jdm-text text-right">{part.quantity}</td>

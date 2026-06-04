@@ -1,29 +1,26 @@
 export default function Header() {
   return (
-    <header className="border-b border-jdm-border bg-jdm-surface/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <header className="bg-white border-b border-jdm-border sticky top-0 z-50">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-jdm-red rounded-lg flex items-center justify-center font-display font-bold text-white text-lg leading-none select-none shadow-[0_0_15px_rgba(204,0,34,0.5)]">
-            S
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-jdm-red rounded-md flex items-center justify-center select-none">
+            <span className="font-display font-bold text-white text-sm leading-none">S</span>
           </div>
           <div>
-            <h1 className="font-display font-bold text-xl text-jdm-text leading-none tracking-wide">
+            <span className="font-display font-bold text-lg text-jdm-text tracking-wide leading-none">
               SkylineDB
-            </h1>
-            <p className="text-[11px] text-jdm-muted tracking-widest uppercase">
+            </span>
+            <span className="hidden sm:inline text-jdm-muted text-xs ml-2">
               VIN Decoder &amp; Parts
-            </p>
+            </span>
           </div>
         </div>
 
-        {/* Nav badges */}
-        <div className="hidden sm:flex items-center gap-2 text-xs text-jdm-muted">
+        {/* Generation pills */}
+        <div className="flex items-center gap-1.5">
           {['R32', 'R33', 'R34'].map((gen) => (
-            <span
-              key={gen}
-              className="badge border-jdm-border text-jdm-muted"
-            >
+            <span key={gen} className="text-[11px] font-medium px-2 py-0.5 rounded bg-jdm-bg text-jdm-muted border border-jdm-border">
               {gen}
             </span>
           ))}
