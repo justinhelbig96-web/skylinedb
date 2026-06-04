@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Custom scrollbar ───────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: #0f0f1b; }
+::-webkit-scrollbar-thumb  { background: #cc0022; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #ff1a35; }
+
+/* ── Selection ──────────────────────────────────────────────────────────── */
+::selection { background: rgba(204, 0, 34, 0.4); }
+
+/* ── Focus ring ─────────────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid #cc0022;
+  outline-offset: 2px;
+}
+
+/* ── Utility classes ────────────────────────────────────────────────────── */
+@layer components {
+  .card {
+    @apply bg-jdm-card border border-jdm-border rounded-xl;
+  }
+
+  .btn-primary {
+    @apply bg-jdm-red hover:bg-jdm-red-bright text-white font-semibold
+           px-6 py-3 rounded-lg transition-all duration-200
+           active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply border border-jdm-border hover:border-jdm-red text-jdm-muted
+           hover:text-jdm-text px-4 py-2 rounded-lg transition-all duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5
+           rounded-full border;
+  }
+
+  .section-title {
+    @apply text-xs font-semibold uppercase tracking-widest text-jdm-muted
+           mb-3;
+  }
+
+  .data-row {
+    @apply flex justify-between items-center py-2 border-b border-jdm-border/50
+           last:border-0;
+  }
+
+  .data-label {
+    @apply text-jdm-muted text-sm;
+  }
+
+  .data-value {
+    @apply text-jdm-text text-sm font-medium text-right;
+  }
+
+  .tab-btn {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium
+           transition-all duration-200 whitespace-nowrap;
+  }
+
+  .tab-btn-active {
+    @apply bg-jdm-red text-white;
+  }
+
+  .tab-btn-inactive {
+    @apply text-jdm-muted hover:text-jdm-text hover:bg-jdm-border/50;
+  }
+
+  .input-vin {
+    @apply w-full bg-jdm-surface border-2 border-jdm-border rounded-xl
+           px-5 py-4 text-xl font-mono tracking-widest text-jdm-text
+           placeholder:text-jdm-muted/60 uppercase
+           focus:border-jdm-red focus:outline-none
+           transition-all duration-200;
+  }
+}
